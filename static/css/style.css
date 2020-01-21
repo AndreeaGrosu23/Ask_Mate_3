@@ -1,0 +1,14 @@
+html {
+    font-family: "Adobe Garamond Pro" serif;
+    font-size: 20px;
+    padding: 15%;
+    background-color: darkseagreen;
+    color: darkgreen;
+}
+
+a {
+    display: inline-block;
+    color: lightslategray;
+    font-size: 20px;
+    padding: 30px;
+}

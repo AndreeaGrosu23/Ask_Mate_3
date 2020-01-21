@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+            <meta charset="UTF-8">
+            <title>Ask Mate 2</title>
+        {% endblock %}
+    </head>
+    <body>
+            {% block content %} {% endblock %}
+    </body>
+</html>
