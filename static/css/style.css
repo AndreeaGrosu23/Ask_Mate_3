@@ -1,14 +1,28 @@
 html {
     font-family: "Adobe Garamond Pro" serif;
     font-size: 20px;
-    padding: 15%;
-    background-color: darkseagreen;
-    color: darkgreen;
+    padding: 5%;
+    background-color: cornsilk;
+    color: darkslategray;
 }
 
 a {
     display: inline-block;
     color: lightslategray;
     font-size: 20px;
-    padding: 30px;
+    margin: 30px;
+}
+
+td {
+    border: 2px solid black;
+}
+
+th {
+    font-weight: bold;
+    font-size: 23px;
+    border: 2px solid black;
+}
+
+.search {
+    width; 80%;
 }

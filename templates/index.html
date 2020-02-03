@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>All questions</h1>
+    <h1>Menu</h1>
+    <a href="{{ url_for('all_questions') }}">List all questions</a>
+    <a href="#">Add a question</a>
 {% endblock %}
