@@ -3,5 +3,8 @@
 {% block content %}
     <h1>Menu</h1>
     <a href="{{ url_for('all_questions') }}">List all questions</a>
-    <a href="#">Add a question</a>
+    <form class="search" action="/search" method="GET">
+        <input type="text" name="q">
+        <input type="submit" class="button" value="Search"><a href="{{ url_for('search') }}"></a>
+    </form>
 {% endblock %}
