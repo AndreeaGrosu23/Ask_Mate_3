@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>What is your question?</h1>
+    <form action="add-new-question" method="POST">
+        <input type="text" size="40" name="title" >Title<br>
+        <input type="text" size="40" name="message" >Message<br>
+        <input type="Submit" value="Submit" class="button" ><br>
+    </form>
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

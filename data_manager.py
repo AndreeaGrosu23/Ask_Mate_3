@@ -23,7 +23,7 @@ def get_all_answers(cursor):
 def search_in_questions(cursor, phrase):
 
     query = """
-                    SELECT DISTINCT question.id AS ID, question.submission_time AS submission_time , question.view_number AS view_number, question.vote_number AS vote_number, question.title AS title, question.message AS message, question.image AS image, answer.id AS a_id, answer.question_id AS a_question_id, answer.submission_time AS a_submission_time, answer.vote_number AS a_vote_number, answer.message AS a_message, answer.image AS a_image 
+                    SELECT DISTINCT question.id AS id, question.submission_time AS submission_time , question.view_number AS view_number, question.vote_number AS vote_number, question.title AS title, question.message AS message, question.image AS image, answer.id AS a_id, answer.question_id AS a_question_id, answer.submission_time AS a_submission_time, answer.vote_number AS a_vote_number, answer.message AS a_message, answer.image AS a_image 
                     FROM question
                     LEFT JOIN answer
                     ON question.id = answer.question_id
@@ -83,3 +83,42 @@ def get_five_questions(cursor):
                    """)
     five_questions = cursor.fetchall()
     return five_questions
+
+@database_common.connection_handler
+def add_new_question(cursor, data):
+    cursor.execute("""
+                    INSERT INTO question ( submission_time, view_number, vote_number, title, message)
+                    VALUES ( CURRENT_TIMESTAMP, 0, 0, %s, %s) ;
+                   """,
+                  (data['title'],
+                    data['message'])
+                    )
+
+
+@database_common.connection_handler
+def add_new_answer(cursor, data):
+    cursor.execute("""
+                    INSERT INTO answer ( submission_time, vote_number, question_id, message)
+                    VALUES ( CURRENT_TIMESTAMP, 0, %s, %s) ;
+                   """,
+                  (data['question_id'],
+                    data['message'])
+                    )
+
+
+@database_common.connection_handler
+def delete_question(cursor, question_id):
+    cursor.execute("""
+                    DELETE FROM question
+                    WHERE id = %(question_id)s;
+                    """,
+                   {'question_id': question_id})
+
+
+@database_common.connection_handler
+def delete_answer(cursor, answer_id):
+    cursor.execute("""
+                    DELETE FROM answer
+                    WHERE answer_id = %(answer_id)s;
+                    """,
+                   {'answer_id': answer_id})

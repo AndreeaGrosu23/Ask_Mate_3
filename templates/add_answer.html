@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>What is your answer?</h1>
+    <form action="add-new-answer" method="POST">
+        <input type="text" size="40" name="message" >Message<br>
+        <input type="Submit" value="Submit" class="button" ><br>
+    </form>
+
+
+{% include 'footer.html' %}
+
+{% endblock %}
