@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>Answer</h1>
+
+    <form action="/answer/{{ answer_id }}/edit" method="POST">
+        <input type="text" size="40" name="answer_message" value="{{ answer['message'] }}" >Message<br>
+        <input type="Submit" value="Update" class="button" ><br>
+    <br>
+    </form>
+
+
+    {% include 'footer.html' %}
+{% endblock %}

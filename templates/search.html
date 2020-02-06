@@ -11,6 +11,9 @@
             <th>Title</th>
             <th>Message</th>
             <th>Image</th>
+            <th>Answer submission time</th>
+            <th>Answer vote number</th>
+            <th>Answer message</th>
         </tr>
         {% for question in questions %}
         <tr>
@@ -18,9 +21,15 @@
             <td>{{ question.submission_time }}</td>
             <td>{{ question.view_number }}</td>
             <td>{{ question.vote_number }}</td>
-            <td>{{ question.title }}</td>
-            <td>{{ question.message }}</td>
+            <td>{{ question.title | replace(phrase, '<span>' + phrase + '</span>' ) | safe }}</td>
+            <td>{{ question.message | replace(phrase, '<span>' + phrase + '</span>' ) | safe }}</td>
             <td>{{ question.image }}</td>
+            {% if question.a_id != "None" %}
+                <td>{{ question.a_submission_time }}</td>
+                <td>{{ question.a_vote_number }}</td>
+                <td>{{ question.a_message | replace(phrase, '<span>' + phrase + '</span>' ) | safe}}</td>
+            {% endif %}
+
         </tr>
         {%  endfor %}
     </table>
