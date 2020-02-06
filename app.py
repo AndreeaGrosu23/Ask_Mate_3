@@ -11,7 +11,6 @@ def index():
 
 
 @app.route('/list')
-@app.route('/answer')
 def all_questions():
     questions = data_manager.get_all_questions()
     return render_template('list.html', questions=questions)
@@ -30,6 +29,7 @@ def question_details(question_id):
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
+@app.route('/answer')
 def edit_answer(answer_id):
     if request.method== 'GET':
         answer=data_manager.get_answer(answer_id)

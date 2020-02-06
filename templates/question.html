@@ -9,15 +9,20 @@
         <p>Question Title: {{ answers[0].title }}</p>
         <p>Question Message: {{ answers[0].message }}</p>
         <p>Question Image: {{ answers[0].image }}</p>
-    {% for answer in answers %}
-        <p>Answer ID: {{ answer.a_id}}</p>
-        <p>Answer Submission Time: {{ answer.a_submission_time }}</p>
-        <p>Answer Vote number: {{ answer.a_vote_number }}</p>
-        <p>Answer Question ID: {{ answer.a_question_id }}</p>
-        <a href="{{ url_for('edit_answer', answer_id=answer.a_id) }}">Answer Message: {{ answer.a_message }}</a>
-        <p>Answer Image: {{ answer.a_image }}</p>
-
-    {% endfor %}
+        <br>
+        <br>
+    {% if answers[0]['a_id'] != None %}
+        {% for answer in answers %}
+            <p>Answer ID: {{ answer.a_id}}</p>
+            <p>Answer Submission Time: {{ answer.a_submission_time }}</p>
+            <p>Answer Vote number: {{ answer.a_vote_number }}</p>
+            <p>Answer Question ID: {{ answer.a_question_id }}</p>
+            <a href="{{ url_for('edit_answer', answer_id=answer.a_id) }}">Answer Message: {{ answer.a_message }}</a>
+            <p>Answer Image: {{ answer.a_image }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No answers for this question</p>
+    {% endif %}
     {% include 'footer.html' %}
     
 {% endblock %}

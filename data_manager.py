@@ -82,5 +82,4 @@ def get_five_questions(cursor):
                     LIMIT 5;
                    """)
     five_questions = cursor.fetchall()
-    print(five_questions)
     return five_questions
