@@ -89,7 +89,7 @@ def get_five_questions(cursor):
 def add_new_question(cursor, data):
     cursor.execute("""
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message)
-                    VALUES ( DATETIME(CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
+                    VALUES ( CURRENT_TIMESTAMP, 0, 0, %s, %s) ;
                    """,
                   (data['title'],
                     data['message'])
