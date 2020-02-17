@@ -77,7 +77,7 @@ def delete_answer(answer_id):
         return render_template('index.html', questions=questions)
 
 
-@app.route('/add-new-answer', methods=['GET', 'POST'])
+@app.route('/question/<question_id>/add-new-answer', methods=['GET', 'POST'])
 def add_answer(question_id):
     if request.method == 'GET':
         return render_template('add_answer.html')
