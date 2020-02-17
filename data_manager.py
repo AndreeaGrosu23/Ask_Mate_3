@@ -1,4 +1,5 @@
 import database_common
+import datetime
 
 
 @database_common.connection_handler
@@ -88,7 +89,7 @@ def get_five_questions(cursor):
 def add_new_question(cursor, data):
     cursor.execute("""
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message)
-                    VALUES ( CURRENT_TIMESTAMP, 0, 0, %s, %s) ;
+                    VALUES ( DATETIME(CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
                    """,
                   (data['title'],
                     data['message'])
@@ -119,6 +120,6 @@ def delete_question(cursor, question_id):
 def delete_answer(cursor, answer_id):
     cursor.execute("""
                     DELETE FROM answer
-                    WHERE answer_id = %(answer_id)s;
+                    WHERE id = %(answer_id)s;
                     """,
                    {'answer_id': answer_id})
