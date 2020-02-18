@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="adi_cool@localhost" uuid="cd850a6d-d080-43c2-80bd-862a9c775010">
+    <data-source source="LOCAL" name="askmate@localhost" uuid="fbc76fe5-fa97-41f6-8712-a56dcc5e1e9d">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/adi_cool</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/askmate</jdbc-url>
     </data-source>
   </component>
 </project>
