@@ -1,13 +1,42 @@
 import data_manager
-from flask import Flask, render_template, request
+import os
+from flask import Flask,session, render_template, escape, request
 
 app = Flask(__name__)
 
+app.secret_key= os.urandom(24)
 
 @app.route('/')
 def index():
-    questions = data_manager.get_five_questions()
-    return render_template('index.html', questions=questions)
+    return render_template('first_page.html')
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+
+# @app.route('/')
+# def index():
+#     if 'username' in session:
+#         return 'Logged in as %s' % escape(session['username'])
+#     return render_template('login.html')
+#
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # if request.method == 'POST':
+    #     session['username'] = request.form['username']
+    #     return redirect(url_for('index'))
+    return render_template('login.html')
+#
+# @app.route('/logout')
+# def logout():
+#     # remove the username from the session if it's there
+#     session.pop('username', None)
+#     return redirect(url_for('index'))
+# @app.route('/list_5_questions')
+# def index():
+#     questions = data_manager.get_five_questions()
+#     return render_template('index.html', questions=questions)
 
 
 @app.route('/list')
