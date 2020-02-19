@@ -24,6 +24,7 @@
     {% else %}
         <p>No answers for this question</p>
     {% endif %}
+    <p>Tags: {{ question_tags }}</p>
     <br>
     <br>
     <a href="{{ url_for('add_answer', question_id = answers[0].id) }}">Add answer</a>

@@ -1,5 +1,5 @@
 import database_common
-import datetime
+import bcrypt
 
 
 @database_common.connection_handler
@@ -89,7 +89,7 @@ def get_five_questions(cursor):
 def add_new_question(cursor, data):
     cursor.execute("""
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message)
-                    VALUES ( date_trunc('seconds',CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
                    """,
                   (data['title'],
                     data['message'])
@@ -100,12 +100,20 @@ def add_new_question(cursor, data):
 def add_new_answer(cursor, data):
     cursor.execute("""
                     INSERT INTO answer ( submission_time, vote_number, question_id, message)
-                    VALUES ( date_trunc('seconds',CURRENT_TIMESTAMP), 0, %s, %s) ;
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s) ;
                    """,
                   (data['question_id'],
                     data['message'])
                     )
 
+@database_common.connection_handler
+def add_user(cursor, data):
+    cursor.execute("""
+        INSERT INTO users(username, password, registration_time)
+        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP) );
+    """,
+                   (data['username'],
+                    data['password']))
 
 @database_common.connection_handler
 def delete_question(cursor, question_id):
@@ -123,3 +131,35 @@ def delete_answer(cursor, answer_id):
                     WHERE id = %(answer_id)s;
                     """,
                    {'answer_id': answer_id})
+
+
+def hash_password(plain_text_password):
+    # By using bcrypt, the salt is saved into the hash itself
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+
+@database_common.connection_handler
+def login(cursor, username):
+    cursor.execute("""
+        SELECT password FROM users
+        WHERE username = %(username)s;
+    """, {'username': username})
+    password= cursor.fetchone()
+    return password
+
+
+@database_common.connection_handler
+def display_tags(cursor, question_id):
+    cursor.execute("""
+        SELECT name FROM tag
+        LEFT JOIN question_tag on tag.id = question_tag.tag_id
+        WHERE question_tag.question_id=%(question_id)s;
+                    """,
+                   {'question_id': question_id})
+    tags = cursor.fetchone()
+    return tags['name']
