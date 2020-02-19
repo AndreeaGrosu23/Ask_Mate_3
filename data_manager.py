@@ -1,5 +1,5 @@
 import database_common
-import datetime
+import bcrypt
 
 
 @database_common.connection_handler
@@ -106,6 +106,14 @@ def add_new_answer(cursor, data):
                     data['message'])
                     )
 
+@database_common.connection_handler
+def add_user(cursor, data):
+    cursor.execute("""
+        INSERT INTO users(username, password, registration_time)
+        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP) );
+    """,
+                   (data['username'],
+                    data['password']))
 
 @database_common.connection_handler
 def delete_question(cursor, question_id):
@@ -123,3 +131,23 @@ def delete_answer(cursor, answer_id):
                     WHERE id = %(answer_id)s;
                     """,
                    {'answer_id': answer_id})
+
+
+def hash_password(plain_text_password):
+    # By using bcrypt, the salt is saved into the hash itself
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+
+@database_common.connection_handler
+def login(cursor, username):
+    cursor.execute("""
+        SELECT password FROM users
+        WHERE username = %(username)s;
+    """, {'username': username})
+    password= cursor.fetchone()
+    return password
