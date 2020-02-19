@@ -137,6 +137,11 @@ def add_answer(question_id):
         return render_template('index.html', questions=questions)
 
 
+@app.route('/tags')
+def list_tags():
+    tags= data_manager.list_tags()
+    return render_template('list_tags.html', tags=tags)
+
 
 
 if __name__ == '__main__':

@@ -163,3 +163,13 @@ def display_tags(cursor, question_id):
                    {'question_id': question_id})
     tags = cursor.fetchone()
     return tags['name']
+
+@database_common.connection_handler
+def list_tags(cursor):
+    cursor.execute("""
+        SELECT tag.name, COUNT(qt.question_id) as number_of_questions FROM tag
+        LEFT JOIN question_tag qt on tag.id = qt.tag_id
+        GROUP BY tag.name
+    """)
+    all_tags = cursor.fetchall()
+    return all_tags
