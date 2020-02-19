@@ -5,7 +5,7 @@
         <p>Question ID: {{ answers[0].id }}</p>
         <p>Question Submission time: {{ answers[0].submission_time }}</p>
         <p>Question View number: {{ answers[0].view_number }}</p>
-        <p>Question Vote number: {{answers[0].vote_number }}</p>
+        <p>Question Vote number: {{answers[0].vote_number }}</p><a href="{{ url_for('question_vote_up', question_id=question_id) }}">^</a>
         <p>Question Title: {{ answers[0].title }}</p>
         <p>Question Message: {{ answers[0].message }}</p>
         <p>Question Image: {{ answers[0].image }}</p>

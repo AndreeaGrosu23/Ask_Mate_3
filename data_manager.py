@@ -109,8 +109,8 @@ def add_new_answer(cursor, data):
 @database_common.connection_handler
 def add_user(cursor, data):
     cursor.execute("""
-        INSERT INTO users(username, password, registration_time)
-        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP) );
+        INSERT INTO users(username, password, registration_time, reputation)
+        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP), 0 );
     """,
                    (data['username'],
                     data['password']))
@@ -151,3 +151,22 @@ def login(cursor, username):
     """, {'username': username})
     password= cursor.fetchone()
     return password
+
+@database_common.connection_handler
+def get_all_users(cursor):
+    cursor.execute("""
+                    SELECT * FROM users;
+                   """)
+    all_users = cursor.fetchall()
+    return all_users
+
+@database_common.connection_handler
+def update_vote(cursor, data):
+    cursor.execute("""
+                    UPDATE question
+                    SET vote_number=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['vote_number'],
+                    data['question_id'])
+                   )

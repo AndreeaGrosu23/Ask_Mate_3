@@ -1,7 +1,6 @@
 import data_manager
 import os
-import bcrypt
-from flask import Flask,session, render_template, escape, request, redirect, url_for
+from flask import Flask,session, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -134,6 +133,24 @@ def add_answer(question_id):
         questions = data_manager.get_five_questions()
         return render_template('index.html', questions=questions)
 
+
+@app.route('/list-users')
+def all_users():
+    all_users = data_manager.get_all_users()
+    return render_template('list_users.html', all_users=all_users)
+
+@app.route('/question/<question_id>/vote_up')
+def question_vote_up(question_id):
+    answers = data_manager.get_question_with_answers(question_id)
+    vote_number=int(answers[0]['vote_number'])+1
+
+    data = {
+        'vote_number': vote_number,
+        'question_id': int(question_id),
+    }
+
+    data_manager.update_vote(data)
+    return redirect(url_for('question_details', answers=answers, question_id=question_id))
 
 
 
