@@ -1,11 +1,52 @@
 import data_manager
-from flask import Flask, render_template, request
+import os
+import bcrypt
+from flask import Flask,session, render_template, escape, request, redirect, url_for
 
 app = Flask(__name__)
 
+app.secret_key= os.urandom(24)
 
 @app.route('/')
 def index():
+    return render_template('first_page.html')
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'GET':
+        return render_template('register.html')
+    elif request.method == 'POST':
+        form_data = {
+            'username': request.form['username'],
+            'password': data_manager.hash_password(request.form['password'])
+        }
+        data_manager.add_user(form_data)
+        return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        input_pass = request.form['password']
+        db_pass = data_manager.login(request.form['username'])
+        if data_manager.verify_password(input_pass, db_pass['password']):
+            session['username'] = request.form['username']
+            return redirect(url_for('menu'))
+        else:
+            return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))
+
+
+@app.route('/menu')
+def menu():
     questions = data_manager.get_five_questions()
     return render_template('index.html', questions=questions)
 
@@ -92,6 +133,8 @@ def add_answer(question_id):
 
         questions = data_manager.get_five_questions()
         return render_template('index.html', questions=questions)
+
+
 
 
 if __name__ == '__main__':
