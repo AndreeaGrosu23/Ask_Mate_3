@@ -5,8 +5,10 @@
     <h3 class = "log_in_name">You are logged in as: {{ username }}</h3>
     <a href="{{ url_for('all_questions') }}">List all questions</a>
     <a href="{{ url_for('add_question') }}">Add question</a>
-    <a href="{{ url_for('all_users') }}">List all users</a>
 
+    <a href="{{ url_for('list_tags') }}"><button >List all tags</button></a>
+    <a href="{{ url_for('user_page', user_id=user_id) }}"<button>User page</button></a>
+    <a href="{{ url_for('all_users') }}">List all users</a>
 
     {% include 'logout.html' %}
 

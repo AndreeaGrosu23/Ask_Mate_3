@@ -48,8 +48,9 @@ def logout():
 @app.route('/menu')
 def menu():
     questions = data_manager.get_five_questions()
-    username = session['username']
-    return render_template('index.html', questions=questions, username=username)
+    user_id = data_manager.get_user_id_by_username(session['username'])
+    return render_template('index.html', questions=questions,user_id=user_id)
+
 
 
 @app.route('/list')
@@ -64,13 +65,15 @@ def search():
     questions = data_manager.search_in_questions(phrase)
     return render_template('search.html', questions=questions, phrase=phrase)
 
+
 @app.route('/question/<question_id>')
 def question_details(question_id):
     answers = data_manager.get_question_with_answers(question_id)
     comments = data_manager.get_comment_to_question(question_id)
+    question_tags = data_manager.display_tags(question_id)
     username_temp = data_manager.get_username_by_user_id(answers[0]['user_id'])
     username = username_temp['username']
-    return render_template('question.html', answers=answers, question_id=int(question_id), comments=comments, username=username)
+    return render_template('question.html', answers=answers, question_id=int(question_id), question_tags=question_tags, comments=comments, username=username)
 
 
 
@@ -142,6 +145,21 @@ def add_answer(question_id):
 
         questions = data_manager.get_five_questions()
         return render_template('index.html', questions=questions)
+
+
+
+@app.route('/tags')
+def list_tags():
+    tags= data_manager.list_tags()
+    return render_template('list_tags.html', tags=tags)
+
+
+@app.route('/user/<user_id>')
+def user_page(user_id):
+    user_questions = data_manager.list_questions_by_user_id(user_id)
+    user_answers = data_manager.list_answers_by_user_id(user_id)
+    user_comments = data_manager.list_comments_by_user_id(user_id)
+    return render_template('user_page.html',user_questions=user_questions, user_answers=user_answers, user_comments=user_comments)
 
 
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
@@ -282,4 +300,4 @@ def answer_vote_down(answer_id, question_id):
 
 
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0')
+    app.run(host= '0.0.0.0',debug=True)
