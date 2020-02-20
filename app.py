@@ -1,7 +1,6 @@
 import data_manager
 import os
-import bcrypt
-from flask import Flask,session, render_template, escape, request, redirect, url_for
+from flask import Flask,session, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -9,6 +8,8 @@ app.secret_key= os.urandom(24)
 
 @app.route('/')
 def index():
+    if 'username' in session:
+        return redirect(url_for('menu'))
     return render_template('first_page.html')
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -40,7 +41,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('index'))
 
@@ -90,10 +90,12 @@ def add_question():
     if request.method == 'GET':
         return render_template('add_question.html')
     elif request.method == 'POST':
-
+        username=session.get('username')
+        user_id=dict(data_manager.get_user_id_by_username(username))
         form_data = {
             'title': request.form['title'],
             'message' : request.form['message'],
+            'user_id' : int(user_id['id'])
         }
 
         data_manager.add_new_question(form_data)
@@ -123,10 +125,12 @@ def add_answer(question_id):
     if request.method == 'GET':
         return render_template('add_answer.html')
     elif request.method == 'POST':
-
+        username = session.get('username')
+        user_id = dict(data_manager.get_user_id_by_username(username))
         form_data = {
             'question_id': int(question_id),
             'message' : request.form['message'],
+            'user_id': int(user_id['id'])
         }
 
         data_manager.add_new_answer(form_data)
@@ -135,7 +139,118 @@ def add_answer(question_id):
         return render_template('index.html', questions=questions)
 
 
+@app.route('/list-users')
+def all_users():
+    all_users = data_manager.get_all_users()
+    return render_template('list_users.html', all_users=all_users)
 
+@app.route('/question/<question_id>/vote_up')
+def question_vote_up(question_id):
+    answers = data_manager.get_question_with_answers(question_id)
+    vote_number=int(answers[0]['vote_number'])+1
+
+    data = {
+        'vote_number': vote_number,
+        'question_id': question_id
+    }
+
+    data_manager.update_vote(data)
+
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] += 5
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+
+    data_manager.update_reputation(data_rep)
+
+    return redirect('/question/' + question_id)
+
+
+
+@app.route('/question/<question_id>/vote_down')
+def question_vote_down(question_id):
+    answers = data_manager.get_question_with_answers(question_id)
+    vote_number=int(answers[0]['vote_number'])-1
+
+    data = {
+        'vote_number': vote_number,
+        'question_id': int(question_id),
+    }
+
+    data_manager.update_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] -= 2
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+
+    return redirect('/question/' + question_id)
+
+
+@app.route('/question/<question_id>/<answer_id>/answer-vote-up')
+def answer_vote_up(answer_id, question_id):
+    answer = data_manager.get_answer(answer_id)
+    vote_number=int(answer['vote_number'])+1
+
+    data = {
+        'vote_number': vote_number,
+        'answer_id': int(answer_id),
+    }
+
+    data_manager.update_answer_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] += 10
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+
+    answers = data_manager.get_question_with_answers(question_id)
+    return redirect(url_for('question_details', answers=answers, question_id=question_id))
+
+
+@app.route('/question/<question_id>/<answer_id>/answer-vote-down')
+def answer_vote_down(answer_id, question_id):
+    answer = data_manager.get_answer(answer_id)
+    vote_number=int(answer['vote_number'])-1
+
+    data = {
+        'vote_number': vote_number,
+        'answer_id': int(answer_id),
+    }
+
+    data_manager.update_answer_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] -= 2
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+
+    answers = data_manager.get_question_with_answers(question_id)
+    return redirect(url_for('question_details', answers=answers, question_id=question_id))
 
 if __name__ == '__main__':
     app.run(host= '0.0.0.0')
