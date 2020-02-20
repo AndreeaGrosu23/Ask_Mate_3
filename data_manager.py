@@ -276,6 +276,7 @@ def get_username_by_user_id(cursor,user_id):
     username= cursor.fetchone()
     return username
 
+@database_common.connection_handler
 def get_all_users(cursor):
     cursor.execute("""
                     SELECT * FROM users;
