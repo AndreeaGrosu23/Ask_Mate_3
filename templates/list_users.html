@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% include 'logout.html' %}
+
+{% block content %}
+    <h1>All users</h1>
+    <br>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Registration Time</th>
+            <th>Reputation</th>
+        </tr>
+        {% for user in all_users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.password }}</td>
+            <td>{{ user.registration_time }}</td>
+            <td>{{ user.reputation }}</td>
+        </tr>
+        {%  endfor %}
+    </table>
+
+    {% include 'footer.html' %}
+
+{% endblock %}
