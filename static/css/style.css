@@ -15,12 +15,14 @@ a {
 
 td {
     border: 2px solid black;
+    text-align: center;
 }
 
 th {
     font-weight: bold;
-    font-size: 23px;
+    font-size: 20px;
     border: 2px solid black;
+    text-align: center;
 }
 
 .search {
