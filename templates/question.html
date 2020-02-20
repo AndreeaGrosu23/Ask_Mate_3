@@ -1,33 +1,50 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>Question {{ question_id }}</h1>
-        <p>Question ID: {{ answers[0].id }}</p>
-        <p>Question Submission time: {{ answers[0].submission_time }}</p>
-        <p>Question View number: {{ answers[0].view_number }}</p>
-        <p>Question Vote number: {{answers[0].vote_number }}</p>
-        <p>Question Title: {{ answers[0].title }}</p>
-        <p>Question Message: {{ answers[0].message }}</p>
-        <p>Question Image: {{ answers[0].image }}</p>
-        <br>
-        <br>
-    {% if answers[0]['a_id'] != None %}
-        {% for answer in answers %}
-            <p>Answer ID: {{ answer.a_id}}</p>
-            <p>Answer Submission Time: {{ answer.a_submission_time }}</p>
-            <p>Answer Vote number: {{ answer.a_vote_number }}</p>
-            <p>Answer Question ID: {{ answer.a_question_id }}</p>
-            <a href="{{ url_for('edit_answer', answer_id = answer.a_id) }}">Answer Message: {{ answer.a_message }}</a>
-            <p>Answer Image: {{ answer.a_image }}</p>
-            <a href="{{ url_for('delete_answer', answer_id = answer.a_id) }}">Delete answer</a>
-        {% endfor %}
-    {% else %}
-        <p>No answers for this question</p>
-    {% endif %}
-    <br>
-    <br>
+
     <a href="{{ url_for('add_answer', question_id = answers[0].id) }}">Add answer</a>
     <a href="{{ url_for('delete_question', question_id = answers[0].id) }}">Delete question</a>
+
+    <h1> {{ answers[0].title }} </h1><h6>{{ answers[0].message }}</h6><sub>ID: {{ answers[0].id }} Submitted at:{{ answers[0].submission_time }} Views:{{ answers[0].view_number }} Votes:{{answers[0].vote_number }}</sub>
+        <a href="{{ url_for('delete_question', question_id = answers[0].id) }}" type="button" class="btn btn-danger">Delete question</a>
+
+<div class="container">
+  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Comments</button><a href="{{ url_for('add_comment_to_question', question_id=question_id) }}" type="button" class="btn btn-success">Add new comment</a>
+  <div id="demo" class="collapse">
+
+          {%  for comment in comments %}
+                  {%  if comment['question_id'] == question_id %}
+                     Comment ID: {{ comment['id'] }})   {{ comment['message'] }}<a href="/delete-comment/{{ question_id }}/{{ comment['id'] }}" type="button" class="btn btn-danger">Delete</a><br>
+                  {%  endif %}
+          {% endfor %}
+
+  </div>
+</div>
+
+<div class="container">
+  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Answers</button><a href="{{ url_for('add_answer', question_id = answers[0].id) }}" type="button" class="btn btn-success">Add answer</a>
+  <div id="demo" class="collapse">
+
+{% if answers[0]['a_id'] != None %}
+    {% for answer in answers %}
+Answer ID: {{ answer.a_id}}) <a href="{{ url_for('edit_answer', answer_id = answer.a_id) }}" >Answer Message: {{ answer.a_message }}</a> <sub>Submitted at:{{ answer.a_submission_time }} Votes:{{ answer.a_vote_number }}</sub><a href="{{ url_for('delete_answer', answer_id = answer.a_id) }}" type="button" class="btn btn-danger">Delete answer</a><br>
+
+    {% endfor %}
+{% else %}
+    <p>No answers for this question</p>
+{% endif %}
+
+  </div>
+</div>
+
+{% if question_tags != None %}
+        {% for tag in question_tags %}
+            <p>Tags: {{ tag['name'] }}</p>
+        {% endfor %}
+
+     {% else %}
+        <p>Tags: none</p>
+    {% endif %}
 
     {% include 'footer.html' %}
     
