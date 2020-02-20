@@ -2,8 +2,9 @@
 
 {% block content %}
     <h1>MENU ASK MATE</h1>
-    <a href="{{ url_for('all_questions') }}">List all questions</a>
-    <a href="{{ url_for('add_question') }}">Add question</a>
+
+    <a href="{{ url_for('all_questions') }}"><button >List all questions</button></a>
+    <a href="{{ url_for('add_question') }}"><button >Add question</button></a>
     {% include 'logout.html' %}
 
     <table>

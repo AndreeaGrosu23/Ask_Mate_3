@@ -65,8 +65,9 @@ def search():
 
 @app.route('/question/<question_id>')
 def question_details(question_id):
-    answers= data_manager.get_question_with_answers(question_id)
-    return render_template('question.html', answers=answers, question_id=question_id)
+    answers = data_manager.get_question_with_answers(question_id)
+    comments = data_manager.get_comment_to_question(question_id)
+    return render_template('question.html', answers=answers, question_id=int(question_id), comments=comments)
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
@@ -96,10 +97,10 @@ def add_question():
             'message' : request.form['message'],
         }
 
-        data_manager.add_new_question(form_data)
+        data_manager.add_new_comment_to_question(form_data)
 
         questions = data_manager.get_five_questions()
-        return render_template('index.html', questions=questions)
+        return render_template('index.html', questions=questions, comments=comments)
 
 
 @app.route('/delete-question/<question_id>')
@@ -134,6 +135,28 @@ def add_answer(question_id):
         questions = data_manager.get_five_questions()
         return render_template('index.html', questions=questions)
 
+
+@app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
+def add_comment_to_question(question_id):
+    if request.method == 'GET':
+        return render_template('add_comment_to_question.html')
+    elif request.method == 'POST':
+
+        form_data = {
+            'question_id': int(question_id),
+            'message' : request.form['message'],
+        }
+
+        data_manager.add_new_comment_to_question(form_data)
+        questions = data_manager.get_five_questions()
+        return render_template('index.html', questions=questions)
+
+@app.route('/delete-comment/<question_id>/<comment_id>')
+@app.route('/delete-comment')
+def delete_comment(question_id, comment_id):
+        data_manager.delete_comment(question_id,comment_id)
+        questions = data_manager.get_five_questions()
+        return redirect('/question/'+str(question_id))
 
 
 

@@ -1,5 +1,6 @@
-import database_common
 import bcrypt
+
+import database_common
 
 
 @database_common.connection_handler
@@ -22,7 +23,6 @@ def get_all_answers(cursor):
 
 @database_common.connection_handler
 def search_in_questions(cursor, phrase):
-
     query = """
                     SELECT DISTINCT question.id AS id, question.submission_time AS submission_time , question.view_number AS view_number, question.vote_number AS vote_number, question.title AS title, question.message AS message, question.image AS image, answer.id AS a_id, answer.question_id AS a_question_id, answer.submission_time AS a_submission_time, answer.vote_number AS a_vote_number, answer.message AS a_message, answer.image AS a_image 
                     FROM question
@@ -33,8 +33,8 @@ def search_in_questions(cursor, phrase):
                     OR answer.message LIKE %(phrase)s;
                    """
     cursor.execute(query,
-                   {'phrase': '%'+phrase+'%'})
-    results=cursor.fetchall()
+                   {'phrase': '%' + phrase + '%'})
+    results = cursor.fetchall()
     return results
 
 
@@ -59,7 +59,7 @@ def get_answer(cursor, answer_id):
                     WHERE answer.id=%(answer_id)s;
                     """,
                    {'answer_id': answer_id})
-    answer=cursor.fetchone()
+    answer = cursor.fetchone()
     return answer
 
 
@@ -85,15 +85,16 @@ def get_five_questions(cursor):
     five_questions = cursor.fetchall()
     return five_questions
 
+
 @database_common.connection_handler
 def add_new_question(cursor, data):
     cursor.execute("""
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
                    """,
-                  (data['title'],
+                   (data['title'],
                     data['message'])
-                    )
+                   )
 
 
 @database_common.connection_handler
@@ -102,9 +103,10 @@ def add_new_answer(cursor, data):
                     INSERT INTO answer ( submission_time, vote_number, question_id, message)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s) ;
                    """,
-                  (data['question_id'],
+                   (data['question_id'],
                     data['message'])
-                    )
+                   )
+
 
 @database_common.connection_handler
 def add_user(cursor, data):
@@ -114,6 +116,7 @@ def add_user(cursor, data):
     """,
                    (data['username'],
                     data['password']))
+
 
 @database_common.connection_handler
 def delete_question(cursor, question_id):
@@ -143,11 +146,41 @@ def verify_password(plain_text_password, hashed_password):
     hashed_bytes_password = hashed_password.encode('utf-8')
     return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
 
+
 @database_common.connection_handler
 def login(cursor, username):
     cursor.execute("""
         SELECT password FROM users
         WHERE username = %(username)s;
     """, {'username': username})
-    password= cursor.fetchone()
+    password = cursor.fetchone()
     return password
+
+
+@database_common.connection_handler
+def get_comment_to_question(cursor, question_id):
+    cursor.execute("""
+                    SELECT * FROM comment;
+                    """,
+                   {'question_id': question_id})
+    comments = cursor.fetchall()
+    return comments
+
+
+@database_common.connection_handler
+def add_new_comment_to_question(cursor, data):
+    cursor.execute("""
+                    INSERT INTO comment ( question_id, answer_id, message, submission_time, edited_count)
+                    VALUES (%s, null, %s, (date_trunc('seconds', CURRENT_TIMESTAMP )), 0) ;
+                   """,
+                   (data['question_id'],
+                    data['message'])
+                   )
+
+
+@database_common.connection_handler
+def delete_comment(cursor, question_id, comment_id):
+    cursor.execute("""
+                    DELETE FROM comment WHERE question_id=%(question_id)s AND id=%(id)s;
+                    """, {'question_id': question_id,
+                          'id': comment_id})
