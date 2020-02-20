@@ -88,22 +88,24 @@ def get_five_questions(cursor):
 @database_common.connection_handler
 def add_new_question(cursor, data):
     cursor.execute("""
-                    INSERT INTO question ( submission_time, view_number, vote_number, title, message)
-                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
+                    INSERT INTO question ( submission_time, view_number, vote_number, title, message, user_id)
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s, %s) ;
                    """,
                   (data['title'],
-                    data['message'])
+                    data['message'],
+                   data['user_id'])
                     )
 
 
 @database_common.connection_handler
 def add_new_answer(cursor, data):
     cursor.execute("""
-                    INSERT INTO answer ( submission_time, vote_number, question_id, message)
-                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s) ;
+                    INSERT INTO answer ( submission_time, vote_number, question_id, message, user_id)
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s, %s) ;
                    """,
                   (data['question_id'],
-                    data['message'])
+                    data['message'],
+                   data['user_id'])
                     )
 
 @database_common.connection_handler
@@ -170,3 +172,60 @@ def update_vote(cursor, data):
                    (data['vote_number'],
                     data['question_id'])
                    )
+
+
+@database_common.connection_handler
+def update_answer_vote(cursor, data):
+    cursor.execute("""
+                    UPDATE answer
+                    SET vote_number=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['vote_number'],
+                    data['answer_id'])
+                   )
+
+@database_common.connection_handler
+def select_reputation(cursor, user_id):
+    cursor.execute("""
+                    SELECT reputation
+                    FROM users
+                    WHERE id=%(user_id)s;
+                    """,
+                   {'user_id': user_id}
+                   )
+    reputation= cursor.fetchone()
+    return reputation
+
+@database_common.connection_handler
+def update_reputation(cursor, data):
+    cursor.execute("""
+                    UPDATE users
+                    SET reputation=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['reputation'],
+                    data['user_id'])
+                   )
+
+
+@database_common.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT user_id FROM question
+                    WHERE id=%(question_id)s;
+                   """,
+                   {'question_id': question_id})
+    user_id = cursor.fetchone()
+    return user_id
+
+
+@database_common.connection_handler
+def get_user_id_by_username(cursor, username):
+    cursor.execute("""
+                    SELECT id FROM users
+                    WHERE username=%(username)s;
+                   """,
+                   {'username': username})
+    user_id = cursor.fetchone()
+    return user_id
