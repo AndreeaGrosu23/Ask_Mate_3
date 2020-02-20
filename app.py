@@ -106,10 +106,10 @@ def add_question():
             'user_id' : user_id
         }
 
-        data_manager.add_new_comment_to_question(form_data)
+        data_manager.add_new_question(form_data)
 
         questions = data_manager.get_five_questions()
-        return render_template('index.html', questions=questions, comments=comments)
+        return render_template('index.html', questions=questions)
 
 
 @app.route('/delete-question/<question_id>')
@@ -169,7 +169,7 @@ def add_comment_to_question(question_id):
     elif request.method == 'POST':
 
         form_data = {
-            'question_id': int(question_id),
+            'question_id': question_id,
             'message' : request.form['message'],
         }
 
