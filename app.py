@@ -48,7 +48,8 @@ def logout():
 @app.route('/menu')
 def menu():
     questions = data_manager.get_five_questions()
-    return render_template('index.html', questions=questions)
+    username = session['username']
+    return render_template('index.html', questions=questions, username=username)
 
 
 @app.route('/list')
@@ -66,7 +67,9 @@ def search():
 @app.route('/question/<question_id>')
 def question_details(question_id):
     answers= data_manager.get_question_with_answers(question_id)
-    return render_template('question.html', answers=answers, question_id=question_id)
+    username_temp=data_manager.get_username_by_user_id(answers[0]['user_id'])
+    username=username_temp['username']
+    return render_template('question.html', answers=answers, question_id=question_id, username=username)
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
@@ -91,10 +94,14 @@ def add_question():
         return render_template('add_question.html')
     elif request.method == 'POST':
 
+        user_id_temp = data_manager.get_user_id_by_username(session['username'])
+        user_id = user_id_temp['id']
         form_data = {
             'title': request.form['title'],
             'message' : request.form['message'],
+            'user_id' : user_id
         }
+
 
         data_manager.add_new_question(form_data)
 

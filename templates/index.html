@@ -2,6 +2,7 @@
 
 {% block content %}
     <h1>MENU ASK MATE</h1>
+    <h3 class = "log_in_name">You are logged in as: {{ username }}</h3>
     <a href="{{ url_for('all_questions') }}">List all questions</a>
     <a href="{{ url_for('add_question') }}">Add question</a>
     {% include 'logout.html' %}
