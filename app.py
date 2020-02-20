@@ -1,7 +1,6 @@
 import data_manager
 import os
-import bcrypt
-from flask import Flask,session, render_template, escape, request, redirect, url_for
+from flask import Flask,session, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -9,6 +8,8 @@ app.secret_key= os.urandom(24)
 
 @app.route('/')
 def index():
+    if 'username' in session:
+        return redirect(url_for('menu'))
     return render_template('first_page.html')
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -40,7 +41,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('index'))
 
@@ -48,7 +48,8 @@ def logout():
 @app.route('/menu')
 def menu():
     questions = data_manager.get_five_questions()
-    return render_template('index.html', questions=questions)
+    username = session['username']
+    return render_template('index.html', questions=questions, username=username)
 
 
 @app.route('/list')
@@ -65,9 +66,16 @@ def search():
 
 @app.route('/question/<question_id>')
 def question_details(question_id):
+<<<<<<< HEAD
     answers = data_manager.get_question_with_answers(question_id)
     comments = data_manager.get_comment_to_question(question_id)
     return render_template('question.html', answers=answers, question_id=int(question_id), comments=comments)
+=======
+    answers= data_manager.get_question_with_answers(question_id)
+    username_temp=data_manager.get_username_by_user_id(answers[0]['user_id'])
+    username=username_temp['username']
+    return render_template('question.html', answers=answers, question_id=question_id, username=username)
+>>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
@@ -91,10 +99,12 @@ def add_question():
     if request.method == 'GET':
         return render_template('add_question.html')
     elif request.method == 'POST':
-
+        user_id_temp = data_manager.get_user_id_by_username(session['username'])
+        user_id = user_id_temp['id']
         form_data = {
             'title': request.form['title'],
             'message' : request.form['message'],
+            'user_id' : user_id
         }
 
         data_manager.add_new_comment_to_question(form_data)
@@ -124,10 +134,12 @@ def add_answer(question_id):
     if request.method == 'GET':
         return render_template('add_answer.html')
     elif request.method == 'POST':
-
+        username = session.get('username')
+        user_id = dict(data_manager.get_user_id_by_username(username))
         form_data = {
             'question_id': int(question_id),
             'message' : request.form['message'],
+            'user_id': int(user_id['id'])
         }
 
         data_manager.add_new_answer(form_data)
@@ -136,6 +148,7 @@ def add_answer(question_id):
         return render_template('index.html', questions=questions)
 
 
+<<<<<<< HEAD
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_question(question_id):
     if request.method == 'GET':
@@ -158,7 +171,120 @@ def delete_comment(question_id, comment_id):
         questions = data_manager.get_five_questions()
         return redirect('/question/'+str(question_id))
 
+=======
+@app.route('/list-users')
+def all_users():
+    all_users = data_manager.get_all_users()
+    return render_template('list_users.html', all_users=all_users)
 
+@app.route('/question/<question_id>/vote_up')
+def question_vote_up(question_id):
+    answers = data_manager.get_question_with_answers(question_id)
+    vote_number=int(answers[0]['vote_number'])+1
+
+    data = {
+        'vote_number': vote_number,
+        'question_id': question_id
+    }
+
+    data_manager.update_vote(data)
+
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] += 5
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+
+    data_manager.update_reputation(data_rep)
+
+    return redirect('/question/' + question_id)
+
+
+
+@app.route('/question/<question_id>/vote_down')
+def question_vote_down(question_id):
+    answers = data_manager.get_question_with_answers(question_id)
+    vote_number=int(answers[0]['vote_number'])-1
+
+    data = {
+        'vote_number': vote_number,
+        'question_id': int(question_id),
+    }
+
+    data_manager.update_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] -= 2
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+
+    return redirect('/question/' + question_id)
+
+
+@app.route('/question/<question_id>/<answer_id>/answer-vote-up')
+def answer_vote_up(answer_id, question_id):
+    answer = data_manager.get_answer(answer_id)
+    vote_number=int(answer['vote_number'])+1
+
+    data = {
+        'vote_number': vote_number,
+        'answer_id': int(answer_id),
+    }
+
+    data_manager.update_answer_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] += 10
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+
+    answers = data_manager.get_question_with_answers(question_id)
+    return redirect(url_for('question_details', answers=answers, question_id=question_id))
+
+
+@app.route('/question/<question_id>/<answer_id>/answer-vote-down')
+def answer_vote_down(answer_id, question_id):
+    answer = data_manager.get_answer(answer_id)
+    vote_number=int(answer['vote_number'])-1
+
+    data = {
+        'vote_number': vote_number,
+        'answer_id': int(answer_id),
+    }
+
+    data_manager.update_answer_vote(data)
+    user_id = dict(data_manager.get_user_id_by_question_id(question_id))
+
+    reputation = dict(data_manager.select_reputation(user_id['user_id']))
+    reputation['reputation'] -= 2
+
+    data_rep = {
+        'reputation': int(reputation['reputation']),
+        'user_id': int(user_id['user_id'])
+    }
+
+    data_manager.update_reputation(data_rep)
+>>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
+
+    answers = data_manager.get_question_with_answers(question_id)
+    return redirect(url_for('question_details', answers=answers, question_id=question_id))
 
 if __name__ == '__main__':
     app.run(host= '0.0.0.0')

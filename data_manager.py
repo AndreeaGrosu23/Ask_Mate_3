@@ -41,7 +41,7 @@ def search_in_questions(cursor, phrase):
 @database_common.connection_handler
 def get_question_with_answers(cursor, question_id):
     cursor.execute("""  
-                    SELECT question.id AS ID, question.submission_time AS submission_time , question.view_number AS view_number, question.vote_number AS vote_number, question.title AS title, question.message AS message, question.image AS image, answer.id AS a_id, answer.question_id AS a_question_id, answer.submission_time AS a_submission_time, answer.vote_number AS a_vote_number, answer.message AS a_message, answer.image AS a_image
+                    SELECT question.id AS ID, question.submission_time AS submission_time , question.view_number AS view_number, question.vote_number AS vote_number, question.title AS title, question.message AS message, question.image AS image,question.user_id AS user_id, answer.id AS a_id, answer.question_id AS a_question_id, answer.submission_time AS a_submission_time, answer.vote_number AS a_vote_number, answer.message AS a_message, answer.image AS a_image
                     FROM question
                     LEFT JOIN answer
                     ON question.id=answer.question_id
@@ -89,30 +89,44 @@ def get_five_questions(cursor):
 @database_common.connection_handler
 def add_new_question(cursor, data):
     cursor.execute("""
-                    INSERT INTO question ( submission_time, view_number, vote_number, title, message)
-                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s) ;
+                    INSERT INTO question ( submission_time, view_number, vote_number, title, message, user_id)
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s, %s) ;
                    """,
+<<<<<<< HEAD
                    (data['title'],
                     data['message'])
                    )
+=======
+                  (data['title'],
+                    data['message'],
+                    data['user_id'])
+                    )
+>>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
 
 
 @database_common.connection_handler
 def add_new_answer(cursor, data):
     cursor.execute("""
-                    INSERT INTO answer ( submission_time, vote_number, question_id, message)
-                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s) ;
+                    INSERT INTO answer ( submission_time, vote_number, question_id, message, user_id)
+                    VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s, %s) ;
                    """,
+<<<<<<< HEAD
                    (data['question_id'],
                     data['message'])
                    )
 
+=======
+                  (data['question_id'],
+                    data['message'],
+                   data['user_id'])
+                    )
+>>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
 
 @database_common.connection_handler
 def add_user(cursor, data):
     cursor.execute("""
-        INSERT INTO users(username, password, registration_time)
-        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP) );
+        INSERT INTO users(username, password, registration_time, reputation)
+        VALUES (%s, %s,date_trunc('seconds', CURRENT_TIMESTAMP), 0 );
     """,
                    (data['username'],
                     data['password']))
@@ -153,6 +167,7 @@ def login(cursor, username):
         SELECT password FROM users
         WHERE username = %(username)s;
     """, {'username': username})
+<<<<<<< HEAD
     password = cursor.fetchone()
     return password
 
@@ -184,3 +199,101 @@ def delete_comment(cursor, question_id, comment_id):
                     DELETE FROM comment WHERE question_id=%(question_id)s AND id=%(id)s;
                     """, {'question_id': question_id,
                           'id': comment_id})
+=======
+    password= cursor.fetchone()
+    return password
+
+@database_common.connection_handler
+def get_user_id_by_username(cursor,username):
+    cursor.execute('''
+        SELECT id FROM users
+        WHERE username = %(username)s;
+    ''', {'username': username})
+    user_id= cursor.fetchone()
+    return user_id
+
+@database_common.connection_handler
+def get_username_by_user_id(cursor,user_id):
+    cursor.execute('''
+        SELECT username FROM users
+        WHERE id = %(user_id)s;
+    ''', {'user_id': user_id})
+    username= cursor.fetchone()
+    return username
+
+def get_all_users(cursor):
+    cursor.execute("""
+                    SELECT * FROM users;
+                   """)
+    all_users = cursor.fetchall()
+    return all_users
+
+@database_common.connection_handler
+def update_vote(cursor, data):
+    cursor.execute("""
+                    UPDATE question
+                    SET vote_number=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['vote_number'],
+                    data['question_id'])
+                   )
+
+
+@database_common.connection_handler
+def update_answer_vote(cursor, data):
+    cursor.execute("""
+                    UPDATE answer
+                    SET vote_number=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['vote_number'],
+                    data['answer_id'])
+                   )
+
+@database_common.connection_handler
+def select_reputation(cursor, user_id):
+    cursor.execute("""
+                    SELECT reputation
+                    FROM users
+                    WHERE id=%(user_id)s;
+                    """,
+                   {'user_id': user_id}
+                   )
+    reputation= cursor.fetchone()
+    return reputation
+
+@database_common.connection_handler
+def update_reputation(cursor, data):
+    cursor.execute("""
+                    UPDATE users
+                    SET reputation=%s
+                    WHERE  id = %s ;
+                    """,
+                   (data['reputation'],
+                    data['user_id'])
+                   )
+
+
+@database_common.connection_handler
+def get_user_id_by_question_id(cursor, question_id):
+    cursor.execute("""
+                    SELECT user_id FROM question
+                    WHERE id=%(question_id)s;
+                   """,
+                   {'question_id': question_id})
+    user_id = cursor.fetchone()
+    return user_id
+
+
+@database_common.connection_handler
+def get_user_id_by_username(cursor, username):
+    cursor.execute("""
+                    SELECT id FROM users
+                    WHERE username=%(username)s;
+                   """,
+                   {'username': username})
+    user_id = cursor.fetchone()
+    return user_id
+
+>>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
