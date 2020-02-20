@@ -5,6 +5,7 @@
     <a href="{{ url_for('all_questions') }}">List all questions</a>
     <a href="{{ url_for('add_question') }}">Add question</a>
     <a href="{{ url_for('list_tags') }}"><button >List all tags</button></a>
+    <a href="{{ url_for('user_page', user_id=user_id) }}"<button>User page</button></a>
     {% include 'logout.html' %}
 
     <table>

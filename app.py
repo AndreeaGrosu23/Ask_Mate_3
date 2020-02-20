@@ -48,7 +48,8 @@ def logout():
 @app.route('/menu')
 def menu():
     questions = data_manager.get_five_questions()
-    return render_template('index.html', questions=questions)
+    user_id = data_manager.get_user_id_by_username(session['username'])
+    return render_template('index.html', questions=questions,user_id=user_id)
 
 
 @app.route('/list')
@@ -143,6 +144,14 @@ def list_tags():
     return render_template('list_tags.html', tags=tags)
 
 
+@app.route('/user/<user_id>')
+def user_page(user_id):
+    user_questions = data_manager.list_questions_by_user_id(user_id)
+    user_answers = data_manager.list_answers_by_user_id(user_id)
+    user_comments = data_manager.list_comments_by_user_id(user_id)
+    return render_template('user_page.html',user_questions=user_questions, user_answers=user_answers, user_comments=user_comments)
+
+
 
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0')
+    app.run(host= '0.0.0.0',debug=True)

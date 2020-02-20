@@ -24,7 +24,16 @@
     {% else %}
         <p>No answers for this question</p>
     {% endif %}
-    <p>Tags: {{ question_tags }}</p>
+
+
+    {% if question_tags != None %}
+        {% for tag in question_tags %}
+            <p>Tags: {{ tag['name'] }}</p>
+        {% endfor %}
+
+     {% else %}
+        <p>Tags: none</p>
+    {% endif %}
     <br>
     <br>
     <a href="{{ url_for('add_answer', question_id = answers[0].id) }}">Add answer</a>

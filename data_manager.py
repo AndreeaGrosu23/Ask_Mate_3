@@ -162,7 +162,10 @@ def display_tags(cursor, question_id):
                     """,
                    {'question_id': question_id})
     tags = cursor.fetchone()
-    return tags['name']
+    tags_list = []
+    tags_list.append(tags)
+    return tags_list
+print(display_tags(1))
 
 @database_common.connection_handler
 def list_tags(cursor):
@@ -173,3 +176,46 @@ def list_tags(cursor):
     """)
     all_tags = cursor.fetchall()
     return all_tags
+
+
+@database_common.connection_handler
+def list_questions_by_user_id(cursor, user_id):
+    cursor.execute("""
+        SELECT DISTINCT users.username,q.title, q.message, q.id FROM users LEFT JOIN question q on users.id = q.user_id
+        WHERE users.id = %(user_id)s;
+    """, {'user_id': user_id})
+    questions_by_user = cursor.fetchall()
+    return questions_by_user
+
+@database_common.connection_handler
+def list_answers_by_user_id(cursor, user_id):
+    cursor.execute("""
+        SELECT DISTINCT answer.message,q.title, q.id FROM answer LEFT JOIN question q on answer.question_id =q.id
+        WHERE answer.user_id = %(user_id)s;
+    """, {'user_id': user_id})
+    answers_by_user = cursor.fetchall()
+    return answers_by_user
+
+@database_common.connection_handler
+def list_comments_by_user_id(cursor, user_id):
+    cursor.execute("""
+        SELECT DISTINCT comment.message,q.title, q.id FROM comment LEFT JOIN question q on comment.question_id =q.id
+        WHERE comment.user_id = %(user_id)s;
+    """, {'user_id': user_id})
+    comments_by_user = cursor.fetchall()
+    return comments_by_user
+
+# @database_common.connection_handler
+# def list_answers_by_user_id(cursor, user_id):
+#     cursor.execute("""
+#         SELECT
+#     """)
+
+@database_common.connection_handler
+def get_user_id_by_username(cursor,username):
+    cursor.execute('''
+        SELECT id FROM users
+        WHERE username = %(username)s;
+    ''', {'username': username})
+    user = cursor.fetchone()
+    return user['id']
