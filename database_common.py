@@ -9,20 +9,14 @@ import psycopg2.extras
 def get_connection_string():
     # setup connection string
     # to do this, please define these environment variables first
-    # user_name = os.environ.get('PSQL_USER_NAME')
-    # password = os.environ.get('PSQL_PASSWORD')
-    # host = os.environ.get('PSQL_HOST')
-    # database_name = os.environ.get('PSQL_DB_NAME')
-    user_name = 'postgres'
-    password = '1234'
-    host = 'localhost'
-    database_name = 'askmate'
-    print("======")
-    print("PSQL_USER_NAME " + str(os.environ.get('PSQL_USER_NAME')))
-    print("PSQL_PASSWORD " + str(os.environ.get('PSQL_PASSWORD')))
-    print("PSQL_HOST " + str(os.environ.get('PSQL_HOST')))
-    print("PSQL_DB_NAME " + str(os.environ.get('PSQL_DB_NAME')))
-    print("======")
+    user_name = os.environ.get('PSQL_USER_NAME')
+    password = os.environ.get('PSQL_PASSWORD')
+    host = os.environ.get('PSQL_HOST')
+    database_name = os.environ.get('PSQL_DB_NAME')
+    # user_name = 'postgres'
+    # password = '1234'
+    # host = 'localhost'
+    # database_name = 'askmate'
 
 
 

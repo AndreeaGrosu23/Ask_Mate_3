@@ -92,16 +92,10 @@ def add_new_question(cursor, data):
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message, user_id)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s, %s) ;
                    """,
-<<<<<<< HEAD
-                   (data['title'],
-                    data['message'])
-                   )
-=======
                   (data['title'],
                     data['message'],
                     data['user_id'])
                     )
->>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
 
 
 @database_common.connection_handler
@@ -110,17 +104,11 @@ def add_new_answer(cursor, data):
                     INSERT INTO answer ( submission_time, vote_number, question_id, message, user_id)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s, %s) ;
                    """,
-<<<<<<< HEAD
-                   (data['question_id'],
-                    data['message'])
-                   )
-
-=======
                   (data['question_id'],
                     data['message'],
                    data['user_id'])
                     )
->>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
+
 
 @database_common.connection_handler
 def add_user(cursor, data):
@@ -167,7 +155,6 @@ def login(cursor, username):
         SELECT password FROM users
         WHERE username = %(username)s;
     """, {'username': username})
-<<<<<<< HEAD
     password = cursor.fetchone()
     return password
 
@@ -199,7 +186,6 @@ def delete_comment(cursor, question_id, comment_id):
                     DELETE FROM comment WHERE question_id=%(question_id)s AND id=%(id)s;
                     """, {'question_id': question_id,
                           'id': comment_id})
-=======
     password= cursor.fetchone()
     return password
 
@@ -295,5 +281,3 @@ def get_user_id_by_username(cursor, username):
                    {'username': username})
     user_id = cursor.fetchone()
     return user_id
-
->>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3

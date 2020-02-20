@@ -66,16 +66,12 @@ def search():
 
 @app.route('/question/<question_id>')
 def question_details(question_id):
-<<<<<<< HEAD
     answers = data_manager.get_question_with_answers(question_id)
     comments = data_manager.get_comment_to_question(question_id)
-    return render_template('question.html', answers=answers, question_id=int(question_id), comments=comments)
-=======
-    answers= data_manager.get_question_with_answers(question_id)
-    username_temp=data_manager.get_username_by_user_id(answers[0]['user_id'])
-    username=username_temp['username']
-    return render_template('question.html', answers=answers, question_id=question_id, username=username)
->>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
+    username_temp = data_manager.get_username_by_user_id(answers[0]['user_id'])
+    username = username_temp['username']
+    return render_template('question.html', answers=answers, question_id=int(question_id), comments=comments, username=username)
+
 
 
 @app.route('/answer/<answer_id>/edit', methods=['GET', 'POST'])
@@ -148,7 +144,6 @@ def add_answer(question_id):
         return render_template('index.html', questions=questions)
 
 
-<<<<<<< HEAD
 @app.route('/question/<question_id>/new-comment', methods=['GET', 'POST'])
 def add_comment_to_question(question_id):
     if request.method == 'GET':
@@ -171,7 +166,7 @@ def delete_comment(question_id, comment_id):
         questions = data_manager.get_five_questions()
         return redirect('/question/'+str(question_id))
 
-=======
+
 @app.route('/list-users')
 def all_users():
     all_users = data_manager.get_all_users()
@@ -281,10 +276,10 @@ def answer_vote_down(answer_id, question_id):
     }
 
     data_manager.update_reputation(data_rep)
->>>>>>> 34634139cff945121bde8cc2ef6634b3a8f9e3b3
 
     answers = data_manager.get_question_with_answers(question_id)
     return redirect(url_for('question_details', answers=answers, question_id=question_id))
+
 
 if __name__ == '__main__':
     app.run(host= '0.0.0.0')
