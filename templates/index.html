@@ -2,13 +2,13 @@
 
 {% block content %}
     <h1>MENU ASK MATE</h1>
-    <h3 class = "log_in_name">You are logged in as: {{ username }}</h3>
-    <a href="{{ url_for('all_questions') }}">List all questions</a>
-    <a href="{{ url_for('add_question') }}">Add question</a>
+    <h3 class = "log_in_name">You are logged in as: {{ session.get('username') }}</h3>
+    <a href="/list">List all questions</a>
+    <a href="/add-new-question">Add question</a>
 
-    <a href="{{ url_for('list_tags') }}"><button >List all tags</button></a>
-    <a href="{{ url_for('user_page', user_id=user_id) }}"<button>User page</button></a>
-    <a href="{{ url_for('all_users') }}">List all users</a>
+    <a href="/tags">List all tags</a>
+    <a href="/user/{{ user_id['id'] }}">User page</a>
+    <a href="/list-users">List all users</a>
 
     {% include 'logout.html' %}
 
