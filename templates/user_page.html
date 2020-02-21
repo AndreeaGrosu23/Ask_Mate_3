@@ -1,27 +1,38 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h2>Username : {{ user_questions[0].username }}</h2>
-    <h3>Questions asked:</h3>
+    <h2>Username : {{ session.get('username') }}</h2>
     <hr>
-    {% for uq in user_questions %}
-        <h4>Question title:</h4><h4><a href={{ url_for('question_details', question_id=uq.id) }}> {{ uq.title }}</a></h4>
-        <h5>Question message: {{ uq.message }}</h5><hr>
-    {% endfor %}
+    {% if  user_questions== [] %}
+        <h3>Questions asked: None</h3>
+    {% else %}
+        <h3>Questions asked:</h3>
+        {% for uq in user_questions %}
+            <h4>Question title:</h4><h4><a href={{ url_for('question_details', question_id=uq.id) }}> {{ uq.title }}</a></h4>
+            <h5>Question message: {{ uq.message }}</h5><hr>
+        {% endfor %}
+    {% endif %}
 
     <hr>
-    <h2>Answers to questions</h2>
-    <hr>
-    {% for ua in user_answers %}
-        <h4>Question title: </h4><h4><a href={{ url_for('question_details', question_id=ua.id) }}> {{ ua.title }} </a></h4>
-        <h5>Answer given: {{ ua.message }}</h5><hr>
-    {% endfor %}
+    {% if  user_answers== [] %}
+        <h3>Answers given: None</h3>
+    {% else %}
+        <h3>Answers given:</h3>
+        {% for ua in user_answers %}
+            <h4>Question title: </h4><h4><a href={{ url_for('question_details', question_id=ua.id) }}> {{ ua.title }} </a></h4>
+            <h5>Answer given: {{ ua.message }}</h5><hr>
+        {% endfor %}
+    {% endif %}
+
 
     <hr>
-    <h2>Comments to questions</h2>
-    <hr>
-    {% for uc in user_comments %}
-        <h4>Question title:</h4><h4> <a href={{ url_for('question_details', question_id=uc.id) }}>{{ uc.title }}</a></h4>
-        <h5>Comment given: {{ uc.message }}</h5><hr>
-    {% endfor %}
+    {% if  user_comments== [] %}
+        <h3>Answers given: None</h3>
+    {% else %}
+        <h3>Answers given:</h3>
+        {% for uc in user_comments %}
+            <h4>Question title:</h4><h4> <a href={{ url_for('question_details', question_id=uc.id) }}>{{ uc.title }}</a></h4>
+            <h5>Comment given: {{ uc.message }}</h5><hr>
+        {% endfor %}
+    {% endif %}
 {% endblock content %}
