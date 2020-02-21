@@ -242,11 +242,6 @@ def list_comments_by_user_id(cursor, user_id):
     comments_by_user = cursor.fetchall()
     return comments_by_user
 
-# @database_common.connection_handler
-# def list_answers_by_user_id(cursor, user_id):
-#     cursor.execute("""
-#         SELECT
-#     """)
 
 @database_common.connection_handler
 def get_user_id_by_username(cursor,username):

@@ -49,7 +49,8 @@ def logout():
 def menu():
     questions = data_manager.get_five_questions()
     user_id = data_manager.get_user_id_by_username(session['username'])
-    return render_template('index.html', questions=questions,user_id=user_id)
+    username = session['username']
+    return render_template('index.html', questions=questions,user_id=user_id, username=username)
 
 
 
