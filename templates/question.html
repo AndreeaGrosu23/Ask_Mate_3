@@ -2,10 +2,7 @@
 
 {% block content %}
 
-    <a href="{{ url_for('add_answer', question_id = answers[0].id) }}">Add answer</a>
-    <a href="{{ url_for('delete_question', question_id = answers[0].id) }}">Delete question</a>
-
-    <h1> {{ answers[0].title }} </h1><h6>{{ answers[0].message }}</h6><sub>ID: {{ answers[0].id }} Submitted at:{{ answers[0].submission_time }} Views:{{ answers[0].view_number }} Votes:{{answers[0].vote_number }}</sub>
+    <h1> {{ answers[0].title }} </h1><h6>{{ answers[0].message }}</h6><sub>ID: {{ answers[0].id }} Submitted at:{{ answers[0].submission_time }} Views:{{ answers[0].view_number }} <a href="{{ url_for('question_vote_up', question_id=question_id) }}">^</a>Votes:{{answers[0].vote_number }}<a href="{{ url_for('question_vote_down', question_id=question_id) }}">v</a></sub>
         <a href="{{ url_for('delete_question', question_id = answers[0].id) }}" type="button" class="btn btn-danger">Delete question</a>
 
 <div class="container">
@@ -27,7 +24,7 @@
 
 {% if answers[0]['a_id'] != None %}
     {% for answer in answers %}
-Answer ID: {{ answer.a_id}}) <a href="{{ url_for('edit_answer', answer_id = answer.a_id) }}" >Answer Message: {{ answer.a_message }}</a> <sub>Submitted at:{{ answer.a_submission_time }} Votes:{{ answer.a_vote_number }}</sub><a href="{{ url_for('delete_answer', answer_id = answer.a_id) }}" type="button" class="btn btn-danger">Delete answer</a><br>
+Answer ID: {{ answer.a_id}}) <a href="{{ url_for('edit_answer', answer_id = answer.a_id) }}" >Answer Message: {{ answer.a_message }}</a> <sub>Submitted at:{{ answer.a_submission_time }} <a href="/question/{{ question_id }}/{{ answer.a_id }}/answer-vote-up">^</a>Votes:{{ answer.a_vote_number }}<a href="{{ url_for('question_vote_down', question_id=question_id) }}">v</a></sub><a href="{{ url_for('delete_answer', answer_id = answer.a_id) }}" type="button" class="btn btn-danger">Delete answer</a><br>
 
     {% endfor %}
 {% else %}
@@ -36,15 +33,6 @@ Answer ID: {{ answer.a_id}}) <a href="{{ url_for('edit_answer', answer_id = answ
 
   </div>
 </div>
-
-{% if question_tags != None %}
-        {% for tag in question_tags %}
-            <p>Tags: {{ tag['name'] }}</p>
-        {% endfor %}
-
-     {% else %}
-        <p>Tags: none</p>
-    {% endif %}
 
     {% include 'footer.html' %}
     
