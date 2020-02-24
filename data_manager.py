@@ -92,10 +92,10 @@ def add_new_question(cursor, data):
                     INSERT INTO question ( submission_time, view_number, vote_number, title, message, user_id)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, 0, %s, %s, %s) ;
                    """,
-                  (data['title'],
+                   (data['title'],
                     data['message'],
                     data['user_id'])
-                    )
+                   )
 
 
 @database_common.connection_handler
@@ -104,10 +104,10 @@ def add_new_answer(cursor, data):
                     INSERT INTO answer ( submission_time, vote_number, question_id, message, user_id)
                     VALUES ( date_trunc('seconds', CURRENT_TIMESTAMP), 0, %s, %s, %s) ;
                    """,
-                  (data['question_id'],
+                   (data['question_id'],
                     data['message'],
-                   data['user_id'])
-                    )
+                    data['user_id'])
+                   )
 
 
 @database_common.connection_handler
@@ -186,7 +186,7 @@ def delete_comment(cursor, question_id, comment_id):
                     DELETE FROM comment WHERE question_id=%(question_id)s AND id=%(id)s;
                     """, {'question_id': question_id,
                           'id': comment_id})
-    password= cursor.fetchone()
+    password = cursor.fetchone()
     return password
 
 
@@ -202,7 +202,7 @@ def display_tags(cursor, question_id):
     tags_list = []
     tags_list.append(tags)
     return tags_list
-print(display_tags(1))
+
 
 @database_common.connection_handler
 def list_tags(cursor):
@@ -218,10 +218,10 @@ def list_tags(cursor):
 @database_common.connection_handler
 def list_questions_by_user_id(cursor, user_id):
     cursor.execute("""
-        SELECT DISTINCT users.username,q.title, q.message, q.id FROM users LEFT JOIN question q on users.id = q.user_id
-        WHERE users.id = %(user_id)s;
+        SELECT DISTINCT q.title, q.message, q.id FROM question q 
+        WHERE q.user_id = %(user_id)s;
     """, {'user_id': user_id})
-    questions_by_user = cursor.fetchall()
+    questions_by_user= cursor.fetchall()
     return questions_by_user
 
 @database_common.connection_handler
@@ -233,6 +233,7 @@ def list_answers_by_user_id(cursor, user_id):
     answers_by_user = cursor.fetchall()
     return answers_by_user
 
+
 @database_common.connection_handler
 def list_comments_by_user_id(cursor, user_id):
     cursor.execute("""
@@ -242,14 +243,9 @@ def list_comments_by_user_id(cursor, user_id):
     comments_by_user = cursor.fetchall()
     return comments_by_user
 
-# @database_common.connection_handler
-# def list_answers_by_user_id(cursor, user_id):
-#     cursor.execute("""
-#         SELECT
-#     """)
 
 @database_common.connection_handler
-def get_user_id_by_username(cursor,username):
+def get_user_id_by_username(cursor, username):
     cursor.execute('''
         SELECT id FROM users
         WHERE username = %(username)s;
@@ -259,29 +255,33 @@ def get_user_id_by_username(cursor,username):
 
 
 @database_common.connection_handler
-def get_user_id_by_username(cursor,username):
+def get_user_id_by_username(cursor, username):
     cursor.execute('''
         SELECT id FROM users
         WHERE username = %(username)s;
     ''', {'username': username})
-    user_id= cursor.fetchone()
+    user_id = cursor.fetchone()
     return user_id
 
+
 @database_common.connection_handler
-def get_username_by_user_id(cursor,user_id):
+def get_username_by_user_id(cursor, user_id):
     cursor.execute('''
         SELECT username FROM users
         WHERE id = %(user_id)s;
     ''', {'user_id': user_id})
-    username= cursor.fetchone()
+    username = cursor.fetchone()
     return username
 
+
+@database_common.connection_handler
 def get_all_users(cursor):
     cursor.execute("""
                     SELECT * FROM users;
                    """)
     all_users = cursor.fetchall()
     return all_users
+
 
 @database_common.connection_handler
 def update_vote(cursor, data):
@@ -306,6 +306,7 @@ def update_answer_vote(cursor, data):
                     data['answer_id'])
                    )
 
+
 @database_common.connection_handler
 def select_reputation(cursor, user_id):
     cursor.execute("""
@@ -315,8 +316,9 @@ def select_reputation(cursor, user_id):
                     """,
                    {'user_id': user_id}
                    )
-    reputation= cursor.fetchone()
+    reputation = cursor.fetchone()
     return reputation
+
 
 @database_common.connection_handler
 def update_reputation(cursor, data):
